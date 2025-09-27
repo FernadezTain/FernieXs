@@ -22,7 +22,7 @@ function goToCheckout() {
     for (let key in DURATIONS) {
         let btn = document.createElement("button");
         btn.textContent = DURATIONS[key][0];
-        btn.className = "duration-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300";
+        btn.className = "duration-button px-4 py-2 rounded-lg bg-gradient-to-r from-gray-200 to-gray-300 hover:scale-105 transition-transform duration-300";
         btn.onclick = () => selectDuration(key, btn);
         container.appendChild(btn);
     }
@@ -33,8 +33,13 @@ function goToCheckout() {
 function selectDuration(durationKey, btnElement) {
     selectedDuration = durationKey;
 
-    document.querySelectorAll(".duration-button").forEach(btn => btn.classList.remove("selected"));
-    btnElement.classList.add("selected");
+    document.querySelectorAll(".duration-button").forEach(btn => {
+        btn.classList.remove("bg-gradient-to-r", "from-purple-400", "to-purple-600", "text-white");
+        btn.classList.add("bg-gradient-to-r", "from-gray-200", "to-gray-300", "text-black");
+    });
+
+    btnElement.classList.remove("bg-gradient-to-r", "from-gray-200", "to-gray-300", "text-black");
+    btnElement.classList.add("bg-gradient-to-r", "from-purple-400", "to-purple-600", "text-white");
 
     document.getElementById("payment-options").classList.remove("hidden");
     updateTotalPrice();
@@ -45,8 +50,8 @@ function setupPaymentButtons() {
     paymentOptions.innerHTML = `
         <p class="mb-2"><strong>Способ оплаты:</strong></p>
         <div class="flex gap-4 mb-6">
-            <button id="payment-semena" class="payment-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300" onclick="selectPayment('Семена', this)">Семена</button>
-            <button id="payment-dc" class="payment-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300" onclick="selectPayment('DigitalCoins', this)">DigitalCoins</button>
+            <button id="payment-semena" class="payment-button bg-gradient-to-r from-indigo-400 to-purple-500 px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300" onclick="selectPayment('Семена', this)">Семена</button>
+            <button id="payment-dc" class="payment-button bg-gradient-to-r from-green-400 to-teal-500 px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300" onclick="selectPayment('DigitalCoins', this)">DigitalCoins</button>
         </div>
         <p id="total-price" class="mb-6 font-bold text-lg"></p>
         <button id="pay-button" class="bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300">
@@ -58,8 +63,13 @@ function setupPaymentButtons() {
 function selectPayment(paymentMethod, btnElement) {
     selectedPayment = paymentMethod;
 
-    document.querySelectorAll(".payment-button").forEach(btn => btn.classList.remove("selected"));
-    btnElement.classList.add("selected");
+    document.querySelectorAll(".payment-button").forEach(btn => {
+        btn.classList.remove("bg-gradient-to-r", "from-yellow-400", "to-orange-500", "text-white");
+        btn.classList.add("bg-gradient-to-r", "from-gray-200", "to-gray-300", "text-black");
+    });
+
+    btnElement.classList.remove("bg-gradient-to-r", "from-gray-200", "to-gray-300", "text-black");
+    btnElement.classList.add("bg-gradient-to-r", "from-yellow-400", "to-orange-500", "text-white");
 
     updateTotalPrice();
 }
@@ -67,6 +77,9 @@ function selectPayment(paymentMethod, btnElement) {
 function updateTotalPrice() {
     if (!selectedDuration || !selectedPayment) return;
 
-    let price = selectedPayment === "Семена" ? DURATIONS[selectedDuration][2] : DURATIONS[selectedDuration][3];
+    let price = selectedPayment === "Семена"
+        ? DURATIONS[selectedDuration][2]
+        : DURATIONS[selectedDuration][3];
+
     document.getElementById("total-price").textContent = `Итого к оплате: ${price} ${selectedPayment}`;
 }
