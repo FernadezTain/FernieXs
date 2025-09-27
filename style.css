@@ -16,15 +16,21 @@ button {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Обычное состояние кнопок оплаты */
-.payment-button {
-    background: linear-gradient(90deg, #8b5cf6, #9333ea); /* фиолетовый градиент */
+/* Обычное состояние кнопок */
+.payment-button,
+.duration-button {
+    background: linear-gradient(90deg, #8b5cf6, #9333ea);
     color: white;
+    border: none;
 }
 
-/* Выбранная кнопка оплаты */
-.payment-button.selected {
-    background: linear-gradient(90deg, #10b981, #22c55e); /* зелёный градиент */
-    color: white;
-    transform: scale(1.05);
+/* Выбранная кнопка — плавная зелёная подсветка */
+.selected {
+    animation: highlight 0.4s ease forwards;
+}
+
+@keyframes highlight {
+    0% { background: linear-gradient(90deg, #8b5cf6, #9333ea); }
+    50% { background: linear-gradient(90deg, #22c55e, #10b981); }
+    100% { background: linear-gradient(90deg, #10b981, #22c55e); }
 }
