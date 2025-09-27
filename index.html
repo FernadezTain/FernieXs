@@ -1,44 +1,96 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FernieX Подписка</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="bg-gradient-to-r from-purple-500 to-indigo-600 min-h-screen flex flex-col items-center justify-center text-white transition-all duration-500">
+const DURATIONS = {
+    "12h": ["12 ч.", 12 * 3600, 50, 75],
+    "24h": ["24 ч.", 24 * 3600, 100, 150],
+    "3d": ["3 дн.", 3 * 86400, 250, 300],
+    "7d": ["7 дн.", 7 * 86400, 725, 750],
+    "15d": ["15 дн.", 15 * 86400, 2000, 2500],
+    "30d": ["30 дн.", 30 * 86400, 3750, 4500],
+    "6m": ["6 мес.", 6 * 30 * 86400, 20000, 22500],
+    "1y": ["1 год", 365 * 86400, 40000, 45000]
+};
 
-    <div id="subscription-page" class="max-w-3xl p-8 animate-fadeIn">
-        <h1 class="text-4xl font-bold text-center mb-8 animate-pulse">Выберите подписку</h1>
+let selectedDuration = null;
+let selectedPayment = null;
 
-        <div class="bg-white rounded-3xl shadow-2xl p-8 text-gray-800 transform transition-transform hover:scale-105 duration-300">
-            <h2 class="text-3xl font-bold mb-4 text-center text-purple-700">Fernie+</h2>
-            <p class="mb-4 text-lg text-center font-semibold">Преимущества:</p>
-            <ul class="list-disc ml-6 space-y-2">
-                <li>Обновленный стиль профиля</li>
-                <li>Уменьшенное время ожидания КД</li>
-                <li>Безограниченный доступ к /ai</li>
-                <li>Множество доп. бонусов</li>
-            </ul>
-            <div class="flex justify-center mt-6">
-                <button onclick="goToCheckout()" class="bg-gradient-to-r from-pink-500 to-yellow-500 text-white font-bold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300">
-                    Выбрать
-                </button>
-            </div>
-        </div>
-    </div>
+function goToCheckout() {
+    document.getElementById("subscription-page").classList.add("hidden");
+    document.getElementById("checkout-page").classList.remove("hidden");
 
-    <div id="checkout-page" class="hidden max-w-3xl p-8 animate-fadeIn">
-        <h1 class="text-4xl font-bold text-center mb-6">Оформление подписки</h1>
-        <div class="bg-white rounded-3xl shadow-2xl p-8 text-gray-800 transform transition-transform hover:scale-105 duration-300">
-            <p class="mb-4"><strong>Подписка:</strong> Fernie+</p>
-            <p class="mb-4"><strong>Срок:</strong></p>
-            <div class="grid grid-cols-3 gap-3 mb-6" id="duration-buttons"></div>
-            <div id="payment-options" class="hidden transition-all duration-500"></div>
-        </div>
-    </div>
+    const container = document.getElementById("duration-buttons");
+    container.innerHTML = "";
 
-    <script src="scripts.js"></script>
-</body>
-</html>
+    for (let key in DURATIONS) {
+        let btn = document.createElement("button");
+        btn.textContent = DURATIONS[key][0];
+        btn.className = "duration-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300 bg-gradient-to-r from-indigo-400 to-purple-500 text-white";
+        btn.onclick = () => selectDuration(key, btn);
+        container.appendChild(btn);
+    }
+
+    setupPaymentButtons();
+}
+
+function selectDuration(durationKey, btnElement) {
+    selectedDuration = durationKey;
+
+    document.querySelectorAll(".duration-button").forEach(btn => btn.classList.remove("selected"));
+    btnElement.classList.add("selected");
+
+    document.getElementById("payment-options").classList.remove("hidden");
+    updateTotalPrice();
+}
+
+function setupPaymentButtons() {
+    const paymentOptions = document.getElementById("payment-options");
+    paymentOptions.innerHTML = `
+        <p class="mb-2"><strong>Способ оплаты:</strong></p>
+        <div class="flex gap-4 mb-6" id="payment-buttons"></div>
+        <p id="total-price" class="mb-6 font-bold text-lg"></p>
+        <button id="pay-button" class="bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300">
+            Оплатить в боте
+        </button>
+    `;
+
+    const paymentButtonsContainer = document.getElementById("payment-buttons");
+
+    const payments = [
+        ["Семена", "bg-gradient-to-r from-indigo-400 to-purple-500"],
+        ["DigitalCoins", "bg-gradient-to-r from-green-400 to-teal-500"]
+    ];
+
+    payments.forEach(([method, style]) => {
+        let btn = document.createElement("button");
+        btn.textContent = method;
+        btn.className = `payment-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300 ${style} text-white`;
+        btn.onclick = () => selectPayment(method, btn);
+        paymentButtonsContainer.appendChild(btn);
+    });
+
+    document.getElementById("pay-button").onclick = payInBot;
+}
+
+function selectPayment(paymentMethod, btnElement) {
+    selectedPayment = paymentMethod;
+
+    document.querySelectorAll(".payment-button").forEach(btn => btn.classList.remove("selected"));
+    btnElement.classList.add("selected");
+
+    updateTotalPrice();
+}
+
+function updateTotalPrice() {
+    if (!selectedDuration || !selectedPayment) return;
+
+    let price = selectedPayment === "Семена" ? DURATIONS[selectedDuration][2] : DURATIONS[selectedDuration][3];
+    document.getElementById("total-price").textContent = `Итого к оплате: ${price} ${selectedPayment}`;
+}
+
+function payInBot() {
+    if (!selectedDuration || !selectedPayment) {
+        alert("Выберите длительность и способ оплаты!");
+        return;
+    }
+
+    const url = `https://t.me/FernieUIBot?start=fernieplus_${selectedDuration}_${selectedPayment}`;
+    window.open(url, "_blank");
+}
