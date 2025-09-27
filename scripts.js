@@ -22,20 +22,32 @@ function goToCheckout() {
     for (let key in DURATIONS) {
         let btn = document.createElement("button");
         btn.textContent = DURATIONS[key][0];
-        btn.className = "bg-gradient-to-r from-indigo-400 to-purple-500 px-4 py-2 rounded-lg hover:scale-105 transition";
-        btn.onclick = () => selectDuration(key);
+        btn.className = "bg-gradient-to-r from-indigo-400 to-purple-500 px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300";
+        btn.onclick = () => selectDuration(key, btn);
         container.appendChild(btn);
     }
 }
 
-function selectDuration(durationKey) {
+function selectDuration(durationKey, btnElement) {
     selectedDuration = durationKey;
+
+    // Снять выделение со всех кнопок
+    document.querySelectorAll("#duration-buttons button").forEach(btn => btn.classList.remove("selected"));
+
+    // Подсветить выбранную
+    btnElement.classList.add("selected");
+
     document.getElementById("payment-options").classList.remove("hidden");
     updateTotalPrice();
 }
 
 function selectPayment(paymentMethod) {
     selectedPayment = paymentMethod;
+
+    // Подсветка выбранной кнопки
+    document.querySelectorAll("#payment-options button").forEach(btn => btn.classList.remove("selected"));
+    event.target.classList.add("selected");
+
     updateTotalPrice();
 }
 
