@@ -38,7 +38,7 @@ function selectDuration(durationKey, btnElement) {
     document.querySelectorAll(".duration-button").forEach(btn => {
         btn.classList.remove("selected");
     });
-    
+
     btnElement.classList.add("selected");
 
     document.getElementById("payment-options").classList.remove("hidden");
@@ -58,12 +58,17 @@ function setupPaymentButtons() {
 
     const paymentButtonsContainer = document.getElementById("payment-buttons");
 
-    const payments = ["Seeds", "DigitalCoins"]; // ← изменено здесь
+    // Хранит и отображаемое имя, и значение для передачи
+    const payments = [
+        { label: "Семена", value: "seeds" },
+        { label: "DigitalCoins", value: "digitalcoins" }
+    ];
 
     paymentButtons = [];
     payments.forEach(paymentMethod => {
         let btn = document.createElement("button");
-        btn.textContent = paymentMethod;
+        btn.textContent = paymentMethod.label; // отображаемое имя
+        btn.dataset.value = paymentMethod.value; // значение для аргумента
         btn.className = "payment-button px-4 py-2 rounded-lg hover-scale-105 transition-transform duration-300 text-white";
         btn.onclick = () => selectPayment(paymentMethod, btn);
         paymentButtons.push(btn);
@@ -74,7 +79,7 @@ function setupPaymentButtons() {
 }
 
 function selectPayment(paymentMethod, btnElement) {
-    selectedPayment = paymentMethod;
+    selectedPayment = paymentMethod; // сохраняем весь объект
 
     paymentButtons.forEach(btn => {
         btn.classList.remove("selected");
@@ -87,8 +92,8 @@ function selectPayment(paymentMethod, btnElement) {
 function updateTotalPrice() {
     if (!selectedDuration || !selectedPayment) return;
 
-    let price = selectedPayment === "Seeds" ? DURATIONS[selectedDuration][2] : DURATIONS[selectedDuration][3];
-    document.getElementById("total-price").textContent = `Итого к оплате: ${price} ${selectedPayment}`;
+    let price = selectedPayment.value === "seeds" ? DURATIONS[selectedDuration][2] : DURATIONS[selectedDuration][3];
+    document.getElementById("total-price").textContent = `Итого к оплате: ${price} ${selectedPayment.label}`;
 }
 
 function payInBot() {
@@ -97,6 +102,6 @@ function payInBot() {
         return;
     }
 
-    const url = `https://t.me/FernieUIBot?start=fernieplus_${selectedDuration}_${selectedPayment}`;
+    const url = `https://t.me/FernieUIBot?start=fernieplus_${selectedDuration}_${selectedPayment.value}`;
     window.open(url, "_blank");
 }
