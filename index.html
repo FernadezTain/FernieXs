@@ -9,7 +9,6 @@
 </head>
 <body class="bg-gradient-to-r from-purple-500 to-indigo-600 min-h-screen flex flex-col items-center justify-center text-white transition-all duration-500">
 
-    <!-- Страница выбора подписки -->
     <div id="subscription-page" class="max-w-3xl p-8 animate-fadeIn">
         <h1 class="text-4xl font-bold text-center mb-8 animate-pulse">Выберите подписку</h1>
 
@@ -30,26 +29,13 @@
         </div>
     </div>
 
-    <!-- Страница оформления -->
     <div id="checkout-page" class="hidden max-w-3xl p-8 animate-fadeIn">
         <h1 class="text-4xl font-bold text-center mb-6">Оформление подписки</h1>
         <div class="bg-white rounded-3xl shadow-2xl p-8 text-gray-800 transform transition-transform hover:scale-105 duration-300">
             <p class="mb-4"><strong>Подписка:</strong> Fernie+</p>
             <p class="mb-4"><strong>Срок:</strong></p>
-
             <div class="grid grid-cols-3 gap-3 mb-6" id="duration-buttons"></div>
-
-            <div id="payment-options" class="hidden transition-all duration-500">
-                <p class="mb-2"><strong>Способ оплаты:</strong></p>
-                <div class="flex gap-4 mb-6">
-                    <button class="bg-gradient-to-r from-indigo-400 to-purple-500 px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300" onclick="selectPayment('Семена')">Семена</button>
-                    <button class="bg-gradient-to-r from-green-400 to-teal-500 px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300" onclick="selectPayment('DigitalCoins')">DigitalCoins</button>
-                </div>
-                <p id="total-price" class="mb-6 font-bold text-lg"></p>
-                <button id="pay-button" class="bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300">
-                    Оплатить в боте
-                </button>
-            </div>
+            <div id="payment-options" class="hidden transition-all duration-500"></div>
         </div>
     </div>
 
