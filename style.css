@@ -1,21 +1,12 @@
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f9fafb;
-    margin: 0;
-    padding: 0;
 }
 
 button {
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    border-radius: 0.5rem;
-    border: none;
-    outline: none;
 }
 
-/* Анимация появления */
 .animate-fadeIn {
     animation: fadeIn 0.6s ease-in-out forwards;
 }
@@ -25,71 +16,15 @@ button {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Кнопки выбора длительности и оплаты */
-.payment-button,
-.duration-button {
-    background: linear-gradient(90deg, #8b5cf6, #9333ea);
+/* Обычное состояние кнопок оплаты */
+.payment-button {
+    background: linear-gradient(90deg, #8b5cf6, #9333ea); /* фиолетовый градиент */
     color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, background 0.3s ease;
 }
 
-/* Ховер эффект */
-.payment-button:hover,
-.duration-button:hover {
-    transform: scale(1.05);
-}
-
-/* Выбранная кнопка — плавная зелёная подсветка */
-.selected {
-    animation: highlight 0.4s ease forwards;
-}
-
-@keyframes highlight {
-    0% { background: linear-gradient(90deg, #8b5cf6, #9333ea); }
-    50% { background: linear-gradient(90deg, #22c55e, #10b981); }
-    100% { background: linear-gradient(90deg, #10b981, #22c55e); }
-}
-
-/* Контейнеры страниц */
-#subscription-page,
-#checkout-page {
-    padding: 2rem;
-}
-
-#duration-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-#payment-options {
-    margin-top: 1rem;
-}
-
-/* Итоговая цена */
-#total-price {
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-/* Кнопка оплаты */
-#pay-button {
-    background: linear-gradient(90deg, #facc15, #f97316);
+/* Выбранная кнопка оплаты */
+.payment-button.selected {
+    background: linear-gradient(90deg, #10b981, #22c55e); /* зелёный градиент */
     color: white;
-    font-weight: bold;
-    padding: 0.75rem 2rem;
-    border-radius: 0.5rem;
-    border: none;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, background 0.3s ease;
-}
-
-#pay-button:hover {
     transform: scale(1.05);
 }
