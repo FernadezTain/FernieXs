@@ -35,12 +35,10 @@ function goToCheckout() {
 function selectDuration(durationKey, btnElement) {
     selectedDuration = durationKey;
 
-    // Сбрасываем все кнопки длительности
     document.querySelectorAll(".duration-button").forEach(btn => {
         btn.classList.remove("selected");
     });
     
-    // Добавляем класс selected к выбранной кнопке
     btnElement.classList.add("selected");
 
     document.getElementById("payment-options").classList.remove("hidden");
@@ -60,7 +58,7 @@ function setupPaymentButtons() {
 
     const paymentButtonsContainer = document.getElementById("payment-buttons");
 
-    const payments = ["Семена", "DigitalCoins"];
+    const payments = ["Seeds", "DigitalCoins"]; // ← изменено здесь
 
     paymentButtons = [];
     payments.forEach(paymentMethod => {
@@ -78,12 +76,10 @@ function setupPaymentButtons() {
 function selectPayment(paymentMethod, btnElement) {
     selectedPayment = paymentMethod;
 
-    // Сбрасываем все кнопки оплаты
     paymentButtons.forEach(btn => {
         btn.classList.remove("selected");
     });
 
-    // Добавляем класс selected к выбранной кнопке
     btnElement.classList.add("selected");
     updateTotalPrice();
 }
@@ -91,7 +87,7 @@ function selectPayment(paymentMethod, btnElement) {
 function updateTotalPrice() {
     if (!selectedDuration || !selectedPayment) return;
 
-    let price = selectedPayment === "Семена" ? DURATIONS[selectedDuration][2] : DURATIONS[selectedDuration][3];
+    let price = selectedPayment === "Seeds" ? DURATIONS[selectedDuration][2] : DURATIONS[selectedDuration][3];
     document.getElementById("total-price").textContent = `Итого к оплате: ${price} ${selectedPayment}`;
 }
 
