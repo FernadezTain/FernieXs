@@ -59,17 +59,14 @@ function setupPaymentButtons() {
 
     const paymentButtonsContainer = document.getElementById("payment-buttons");
 
-    const payments = [
-        { method: "Семена", type: "seeds" },
-        { method: "DigitalCoins", type: "digitalcoins" }
-    ];
+    const payments = ["Семена", "DigitalCoins"];
 
     paymentButtons = [];
-    payments.forEach(payment => {
+    payments.forEach(paymentMethod => {
         let btn = document.createElement("button");
-        btn.textContent = payment.method;
-        btn.className = `payment-button ${payment.type} px-4 py-2 rounded-lg hover-scale-105 transition-transform duration-300 text-white`;
-        btn.onclick = () => selectPayment(payment.method, btn);
+        btn.textContent = paymentMethod;
+        btn.className = "payment-button px-4 py-2 rounded-lg hover-scale-105 transition-transform duration-300 text-white";
+        btn.onclick = () => selectPayment(paymentMethod, btn);
         paymentButtons.push(btn);
         paymentButtonsContainer.appendChild(btn);
     });
