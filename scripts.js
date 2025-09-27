@@ -22,7 +22,7 @@ function goToCheckout() {
     for (let key in DURATIONS) {
         let btn = document.createElement("button");
         btn.textContent = DURATIONS[key][0];
-        btn.className = "bg-gradient-to-r from-indigo-400 to-purple-500 px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300";
+        btn.className = "duration-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300";
         btn.onclick = () => selectDuration(key, btn);
         container.appendChild(btn);
     }
@@ -33,7 +33,7 @@ function goToCheckout() {
 function selectDuration(durationKey, btnElement) {
     selectedDuration = durationKey;
 
-    document.querySelectorAll("#duration-buttons button").forEach(btn => btn.classList.remove("selected"));
+    document.querySelectorAll(".duration-button").forEach(btn => btn.classList.remove("selected"));
     btnElement.classList.add("selected");
 
     document.getElementById("payment-options").classList.remove("hidden");
