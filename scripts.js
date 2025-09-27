@@ -23,7 +23,7 @@ function goToCheckout() {
     for (let key in DURATIONS) {
         let btn = document.createElement("button");
         btn.textContent = DURATIONS[key][0];
-        btn.className = "duration-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300 bg-gradient-to-r from-indigo-400 to-purple-500 text-white";
+        btn.className = "duration-button px-4 py-2 rounded-lg hover-scale-105 transition-transform duration-300 text-white";
         btn.onclick = () => selectDuration(key, btn);
         container.appendChild(btn);
     }
@@ -34,7 +34,12 @@ function goToCheckout() {
 function selectDuration(durationKey, btnElement) {
     selectedDuration = durationKey;
 
-    document.querySelectorAll(".duration-button").forEach(btn => btn.classList.remove("selected"));
+    // Сбрасываем все кнопки длительности
+    document.querySelectorAll(".duration-button").forEach(btn => {
+        btn.classList.remove("selected");
+    });
+    
+    // Добавляем класс selected к выбранной кнопке
     btnElement.classList.add("selected");
 
     document.getElementById("payment-options").classList.remove("hidden");
@@ -47,7 +52,7 @@ function setupPaymentButtons() {
         <p class="mb-2"><strong>Способ оплаты:</strong></p>
         <div class="flex gap-4 mb-6" id="payment-buttons"></div>
         <p id="total-price" class="mb-6 font-bold text-lg"></p>
-        <button id="pay-button" class="bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300">
+        <button id="pay-button" class="pay-button hover-scale-105 transition-transform duration-300">
             Оплатить в боте
         </button>
     `;
@@ -55,17 +60,16 @@ function setupPaymentButtons() {
     const paymentButtonsContainer = document.getElementById("payment-buttons");
 
     const payments = [
-        ["Семена", "bg-gradient-to-r from-indigo-400 to-purple-500"],
-        ["DigitalCoins", "bg-gradient-to-r from-green-400 to-teal-500"]
+        { method: "Семена", type: "seeds" },
+        { method: "DigitalCoins", type: "digitalcoins" }
     ];
 
-    paymentButtons = []; // Сбрасываем список кнопок
-    payments.forEach(([method, style]) => {
+    paymentButtons = [];
+    payments.forEach(payment => {
         let btn = document.createElement("button");
-        btn.textContent = method;
-        btn.className = `payment-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300 ${style} text-white`;
-        btn.dataset.style = style; // Сохраняем стиль
-        btn.onclick = () => selectPayment(method, btn);
+        btn.textContent = payment.method;
+        btn.className = `payment-button ${payment.type} px-4 py-2 rounded-lg hover-scale-105 transition-transform duration-300 text-white`;
+        btn.onclick = () => selectPayment(payment.method, btn);
         paymentButtons.push(btn);
         paymentButtonsContainer.appendChild(btn);
     });
@@ -76,11 +80,13 @@ function setupPaymentButtons() {
 function selectPayment(paymentMethod, btnElement) {
     selectedPayment = paymentMethod;
 
+    // Сбрасываем все кнопки оплаты
     paymentButtons.forEach(btn => {
-        btn.className = `payment-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300 ${btn.dataset.style} text-white`;
+        btn.classList.remove("selected");
     });
 
-    btnElement.className += " selected";
+    // Добавляем класс selected к выбранной кнопке
+    btnElement.classList.add("selected");
     updateTotalPrice();
 }
 
