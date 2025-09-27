@@ -1,3 +1,4 @@
+<script>
 const DURATIONS = {
     "12h": ["12 ч.", 12 * 3600, 50, 75],
     "24h": ["24 ч.", 24 * 3600, 100, 150],
@@ -57,6 +58,8 @@ function setupPaymentButtons() {
             Оплатить в боте
         </button>
     `;
+
+    document.getElementById("pay-button").onclick = payInBot;
 }
 
 function selectPayment(paymentMethod, btnElement) {
@@ -76,3 +79,14 @@ function updateTotalPrice() {
     let price = selectedPayment === "Семена" ? DURATIONS[selectedDuration][2] : DURATIONS[selectedDuration][3];
     document.getElementById("total-price").textContent = `Итого к оплате: ${price} ${selectedPayment}`;
 }
+
+function payInBot() {
+    if (!selectedDuration || !selectedPayment) {
+        alert("Выберите длительность и способ оплаты!");
+        return;
+    }
+
+    const url = `https://t.me/FernieUIBot?start=fernieplus_${selectedDuration}_${selectedPayment}`;
+    window.open(url, "_blank");
+}
+</script>
