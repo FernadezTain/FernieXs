@@ -22,7 +22,7 @@ function goToCheckout() {
     for (let key in DURATIONS) {
         let btn = document.createElement("button");
         btn.textContent = DURATIONS[key][0];
-        btn.className = "duration-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300";
+        btn.className = "duration-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300 bg-gradient-to-r from-indigo-400 to-purple-500 text-white";
         btn.onclick = () => selectDuration(key, btn);
         container.appendChild(btn);
     }
@@ -33,7 +33,10 @@ function goToCheckout() {
 function selectDuration(durationKey, btnElement) {
     selectedDuration = durationKey;
 
-    document.querySelectorAll(".duration-button").forEach(btn => btn.classList.remove("selected"));
+    document.querySelectorAll(".duration-button").forEach(btn => {
+        btn.classList.remove("selected");
+    });
+
     btnElement.classList.add("selected");
 
     document.getElementById("payment-options").classList.remove("hidden");
@@ -42,11 +45,12 @@ function selectDuration(durationKey, btnElement) {
 
 function setupPaymentButtons() {
     const paymentOptions = document.getElementById("payment-options");
+
     paymentOptions.innerHTML = `
         <p class="mb-2"><strong>Способ оплаты:</strong></p>
         <div class="flex gap-4 mb-6">
-            <button id="payment-semena" class="payment-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300" onclick="selectPayment('Семена', this)">Семена</button>
-            <button id="payment-dc" class="payment-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300" onclick="selectPayment('DigitalCoins', this)">DigitalCoins</button>
+            <button id="payment-semena" class="payment-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300 bg-gradient-to-r from-indigo-400 to-purple-500 text-white" onclick="selectPayment('Семена', this)">Семена</button>
+            <button id="payment-dc" class="payment-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300 bg-gradient-to-r from-green-400 to-teal-500 text-white" onclick="selectPayment('DigitalCoins', this)">DigitalCoins</button>
         </div>
         <p id="total-price" class="mb-6 font-bold text-lg"></p>
         <button id="pay-button" class="bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300">
@@ -58,9 +62,11 @@ function setupPaymentButtons() {
 function selectPayment(paymentMethod, btnElement) {
     selectedPayment = paymentMethod;
 
-    document.querySelectorAll(".payment-button").forEach(btn => btn.classList.remove("selected"));
-    btnElement.classList.add("selected");
+    document.querySelectorAll(".payment-button").forEach(btn => {
+        btn.classList.remove("selected");
+    });
 
+    btnElement.classList.add("selected");
     updateTotalPrice();
 }
 
