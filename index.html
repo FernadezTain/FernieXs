@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FernieX Подписка</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gradient-to-r from-purple-500 to-indigo-600 min-h-screen flex flex-col items-center justify-center text-white">
+
+    <!-- Страница выбора подписки -->
+    <div id="subscription-page" class="max-w-3xl p-8">
+        <h1 class="text-4xl font-bold text-center mb-8 animate-pulse">Выберите подписку</h1>
+
+        <div class="bg-white rounded-3xl shadow-2xl p-8 text-gray-800">
+            <h2 class="text-3xl font-bold mb-4 text-center text-purple-700">Fernie+</h2>
+            <p class="mb-4 text-lg text-center font-semibold">Преимущества:</p>
+            <ul class="list-disc ml-6 space-y-2">
+                <li>Обновленный стиль профиля</li>
+                <li>Уменьшенное время ожидания КД</li>
+                <li>Безограниченный доступ к /ai</li>
+                <li>Множество доп. бонусов</li>
+            </ul>
+            <div class="flex justify-center mt-6">
+                <button onclick="goToCheckout()" class="bg-gradient-to-r from-pink-500 to-yellow-500 text-white font-bold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-transform">
+                    Выбрать
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Страница оформления -->
+    <div id="checkout-page" class="hidden max-w-3xl p-8">
+        <h1 class="text-4xl font-bold text-center mb-6">Оформление подписки</h1>
+        <div class="bg-white rounded-3xl shadow-2xl p-8 text-gray-800">
+            <p class="mb-4"><strong>Подписка:</strong> Fernie+</p>
+            <p class="mb-4"><strong>Срок:</strong></p>
+
+            <div class="grid grid-cols-3 gap-3 mb-6" id="duration-buttons">
+                <!-- Кнопки срока генерируются скриптом -->
+            </div>
+
+            <div id="payment-options" class="hidden">
+                <p class="mb-2"><strong>Способ оплаты:</strong></p>
+                <div class="flex gap-4 mb-6">
+                    <button class="bg-gradient-to-r from-indigo-400 to-purple-500 px-4 py-2 rounded-lg hover:scale-105 transition" onclick="selectPayment('Семена')">Семена</button>
+                    <button class="bg-gradient-to-r from-green-400 to-teal-500 px-4 py-2 rounded-lg hover:scale-105 transition" onclick="selectPayment('DigitalCoins')">DigitalCoins</button>
+                </div>
+                <p id="total-price" class="mb-6 font-bold text-lg"></p>
+                <button id="pay-button" class="bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition">
+                    Оплатить в боте
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
