@@ -59,12 +59,12 @@ function setupPaymentButtons() {
         ["DigitalCoins", "bg-gradient-to-r from-green-400 to-teal-500"]
     ];
 
-    paymentButtons = []; // Сбрасываем список кнопок
+    paymentButtons = [];
     payments.forEach(([method, style]) => {
         let btn = document.createElement("button");
         btn.textContent = method;
         btn.className = `payment-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300 ${style} text-white`;
-        btn.dataset.style = style; // Сохраняем стиль
+        btn.dataset.style = style;
         btn.onclick = () => selectPayment(method, btn);
         paymentButtons.push(btn);
         paymentButtonsContainer.appendChild(btn);
@@ -76,11 +76,15 @@ function setupPaymentButtons() {
 function selectPayment(paymentMethod, btnElement) {
     selectedPayment = paymentMethod;
 
+    // Снимаем выделение со всех кнопок
     paymentButtons.forEach(btn => {
+        btn.classList.remove("selected");
         btn.className = `payment-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300 ${btn.dataset.style} text-white`;
     });
 
-    btnElement.className += " selected";
+    // Добавляем выделение только текущей кнопке
+    btnElement.classList.add("selected");
+
     updateTotalPrice();
 }
 
