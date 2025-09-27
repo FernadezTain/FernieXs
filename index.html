@@ -6,6 +6,24 @@
     <title>FernieX Подписка</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Эффект мерцания текста */
+        @keyframes scramble {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+        .scramble {
+            display: inline-block;
+            animation: scramble 0.1s infinite;
+            font-family: monospace;
+        }
+        /* Подсветка кнопки при выборе */
+        .selected-button {
+            background-color: #22c55e !important; /* зеленый Tailwind shade */
+            color: white;
+        }
+    </style>
 </head>
 <body class="bg-gradient-to-r from-purple-500 to-indigo-600 min-h-screen flex flex-col items-center justify-center text-white transition-all duration-500">
 
@@ -42,8 +60,8 @@
             <div id="payment-options" class="hidden transition-all duration-500">
                 <p class="mb-2"><strong>Способ оплаты:</strong></p>
                 <div class="flex gap-4 mb-6">
-                    <button class="bg-gradient-to-r from-indigo-400 to-purple-500 px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300" onclick="selectPayment('Семена')">Семена</button>
-                    <button class="bg-gradient-to-r from-green-400 to-teal-500 px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300" onclick="selectPayment('DigitalCoins')">DigitalCoins</button>
+                    <button id="semena-btn" class="payment-btn bg-gradient-to-r from-indigo-400 to-purple-500 px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300" onclick="selectPayment('Семена')">Семена</button>
+                    <button id="digitalcoins-btn" class="payment-btn bg-gradient-to-r from-purple-600 to-violet-500 px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300" onclick="selectPayment('DigitalCoins')">DigitalCoins</button>
                 </div>
                 <p id="total-price" class="mb-6 font-bold text-lg"></p>
                 <button id="pay-button" class="bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300">
