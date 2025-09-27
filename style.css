@@ -19,17 +19,23 @@ button {
 /* Обычное состояние кнопок */
 .payment-button,
 .duration-button {
+    background: linear-gradient(90deg, #8b5cf6, #9333ea);
     color: white;
     border: none;
 }
 
-/* Выбранная кнопка — зелёная подсветка */
-.selected {
-    background: linear-gradient(90deg, #22c55e, #10b981) !important;
+/* Цвет для кнопки DigitalCoins */
+.payment-button.digitalcoins {
+    background: linear-gradient(90deg, #22c55e, #10b981);
 }
 
-/* Добавим плавный переход цвета */
-.payment-button,
-.duration-button {
-    transition: background 0.3s ease;
+/* Выбранная кнопка — плавная зелёная подсветка */
+.selected {
+    animation: highlight 0.4s ease forwards;
+}
+
+@keyframes highlight {
+    0% { background: linear-gradient(90deg, #8b5cf6, #9333ea); }
+    50% { background: linear-gradient(90deg, #22c55e, #10b981); }
+    100% { background: linear-gradient(90deg, #10b981, #22c55e); }
 }
