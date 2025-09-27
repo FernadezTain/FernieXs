@@ -34,13 +34,7 @@ function goToCheckout() {
 function selectDuration(durationKey, btnElement) {
     selectedDuration = durationKey;
 
-    // Сбрасываем все кнопки длительности
-    document.querySelectorAll(".duration-button").forEach(btn => {
-        btn.classList.remove("selected");
-        btn.style.background = "linear-gradient(90deg, #8b5cf6, #9333ea)";
-    });
-    
-    // Добавляем класс selected к выбранной кнопке
+    document.querySelectorAll(".duration-button").forEach(btn => btn.classList.remove("selected"));
     btnElement.classList.add("selected");
 
     document.getElementById("payment-options").classList.remove("hidden");
@@ -53,7 +47,7 @@ function setupPaymentButtons() {
         <p class="mb-2"><strong>Способ оплаты:</strong></p>
         <div class="flex gap-4 mb-6" id="payment-buttons"></div>
         <p id="total-price" class="mb-6 font-bold text-lg"></p>
-        <button id="pay-button" class="bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300 text-white">
+        <button id="pay-button" class="bg-gradient-to-r from-yellow-400 to-orange-500 px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300">
             Оплатить в боте
         </button>
     `;
@@ -82,19 +76,11 @@ function setupPaymentButtons() {
 function selectPayment(paymentMethod, btnElement) {
     selectedPayment = paymentMethod;
 
-    // Сбрасываем все кнопки оплаты
     paymentButtons.forEach(btn => {
-        btn.classList.remove("selected");
-        // Восстанавливаем оригинальный градиент
-        if (btn.textContent === "Семена") {
-            btn.style.background = "linear-gradient(90deg, #8b5cf6, #9333ea)";
-        } else {
-            btn.style.background = "linear-gradient(90deg, #4ade80, #14b8a6)";
-        }
+        btn.className = `payment-button px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300 ${btn.dataset.style} text-white`;
     });
 
-    // Добавляем класс selected к выбранной кнопке
-    btnElement.classList.add("selected");
+    btnElement.className += " selected";
     updateTotalPrice();
 }
 
