@@ -102,6 +102,6 @@ function payInBot() {
         return;
     }
 
-    const url = `https://t.me/FernieUIBot?start=fernieplus_${selectedDuration}_${selectedPayment.value}`;
+    const url = `https://t.me/FernieXBot?start=fernieplus_${selectedDuration}_${selectedPayment.value}`;
     window.open(url, "_blank");
 }
