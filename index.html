@@ -1,49 +1,767 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FernieX Подписка</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>FernieX — Подписка</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Syne:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    /* ══════════════════════════════════════════
+       RESET & VARIABLES
+    ══════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #07080f;
+      --bg2:      #0d0f1c;
+      --glass:    rgba(255,255,255,0.04);
+      --border:   rgba(255,255,255,0.08);
+      --neon:     #00f0ff;
+      --neon2:    #b94fff;
+      --gold:     #ffd166;
+      --green:    #0fffa0;
+      --text:     #dde3f5;
+      --muted:    #525878;
+      --r:        16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ══════════════════════════════════════════
+       BACKGROUND — ANIMATED MESH + GRID
+    ══════════════════════════════════════════ */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 55% at 15% 10%,  rgba(0,240,255,.10) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 45% at 85% 80%,  rgba(185,79,255,.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 35% at 50% 50%,  rgba(15,255,160,.05) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,240,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,240,255,.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ══════════════════════════════════════════
+       FLOATING PARTICLES
+    ══════════════════════════════════════════ */
+    #particles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      animation: floatUp linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(0)   scale(1);   opacity: 0; }
+      10%  { opacity: .7; }
+      90%  { opacity: .3; }
+      100% { transform: translateY(-110vh) scale(.4); opacity: 0; }
+    }
+
+    /* ══════════════════════════════════════════
+       PAGES WRAPPER
+    ══════════════════════════════════════════ */
+    .page {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 480px;
+      padding: 20px 16px 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .page.hidden { display: none; }
+
+    /* ══════════════════════════════════════════
+       LOGO / BRAND
+    ══════════════════════════════════════════ */
+    .brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 36px;
+      animation: fadeDown .7s cubic-bezier(.22,.68,0,1.2) both;
+    }
+
+    .brand-logo {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: clamp(2.2rem, 9vw, 3rem);
+      letter-spacing: .08em;
+      background: linear-gradient(135deg, var(--neon) 0%, var(--neon2) 60%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 18px rgba(0,240,255,.45));
+    }
+
+    .brand-sub {
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ══════════════════════════════════════════
+       GLASS CARD
+    ══════════════════════════════════════════ */
+    .card {
+      width: 100%;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      padding: 28px 24px;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp .65s cubic-bezier(.22,.68,0,1.2) .15s both;
+    }
+
+    /* top glow line */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--neon), var(--neon2), transparent);
+      opacity: .6;
+    }
+
+    /* corner accent */
+    .card::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; right: -40px;
+      width: 140px; height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(185,79,255,.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ══════════════════════════════════════════
+       PLAN HEADER
+    ══════════════════════════════════════════ */
+    .plan-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .plan-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 30%, var(--neon));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .plan-badge {
+      background: linear-gradient(135deg, rgba(0,240,255,.15), rgba(185,79,255,.15));
+      border: 1px solid rgba(0,240,255,.35);
+      color: var(--neon);
+      font-size: .65rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 99px;
+    }
+
+    /* ══════════════════════════════════════════
+       FEATURES LIST
+    ══════════════════════════════════════════ */
+    .features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .features li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: .92rem;
+      font-weight: 400;
+      color: #b8c3e0;
+    }
+
+    .feat-icon {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(0,240,255,.12), rgba(185,79,255,.12));
+      border: 1px solid rgba(0,240,255,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════════
+       DIVIDER
+    ══════════════════════════════════════════ */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: 20px 0;
+    }
+
+    /* ══════════════════════════════════════════
+       SECTION LABELS
+    ══════════════════════════════════════════ */
+    .section-label {
+      font-size: .68rem;
+      font-weight: 600;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    /* ══════════════════════════════════════════
+       DURATION GRID
+    ══════════════════════════════════════════ */
+    #duration-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .duration-button {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-size: .78rem;
+      font-weight: 600;
+      padding: 10px 4px;
+      cursor: pointer;
+      transition: color .2s, border-color .2s, background .2s, transform .18s, box-shadow .2s;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .duration-button:hover {
+      border-color: rgba(0,240,255,.4);
+      color: var(--text);
+      background: rgba(0,240,255,.06);
+      transform: translateY(-1px);
+    }
+
+    .duration-button.selected {
+      background: linear-gradient(135deg, rgba(15,255,160,.18), rgba(0,240,255,.12));
+      border-color: var(--green);
+      color: var(--green);
+      box-shadow: 0 0 16px rgba(15,255,160,.25);
+      animation: popIn .3s cubic-bezier(.22,.68,0,1.4) forwards;
+    }
+
+    @keyframes popIn {
+      0%   { transform: scale(.93); }
+      60%  { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    /* ══════════════════════════════════════════
+       PAYMENT OPTIONS
+    ══════════════════════════════════════════ */
+    #payment-options {
+      transition: opacity .4s, transform .4s;
+    }
+
+    #payment-options.hidden {
+      display: none;
+    }
+
+    #payment-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .payment-button {
+      flex: 1;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-size: .82rem;
+      font-weight: 600;
+      padding: 12px 8px;
+      cursor: pointer;
+      transition: color .2s, border-color .2s, background .2s, transform .18s, box-shadow .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .payment-button:hover {
+      border-color: rgba(185,79,255,.45);
+      color: var(--text);
+      background: rgba(185,79,255,.07);
+      transform: translateY(-1px);
+    }
+
+    .payment-button.selected {
+      background: linear-gradient(135deg, rgba(15,255,160,.18), rgba(0,240,255,.1));
+      border-color: var(--green);
+      color: var(--green);
+      box-shadow: 0 0 16px rgba(15,255,160,.2);
+      animation: popIn .3s cubic-bezier(.22,.68,0,1.4) forwards;
+    }
+
+    /* ══════════════════════════════════════════
+       TOTAL PRICE
+    ══════════════════════════════════════════ */
+    #total-price {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-align: center;
+      padding: 14px;
+      background: rgba(255,209,102,.06);
+      border: 1px solid rgba(255,209,102,.2);
+      border-radius: 10px;
+      margin-bottom: 20px;
+      letter-spacing: .04em;
+      display: none;
+      animation: fadeUp .4s ease both;
+    }
+
+    #total-price.visible { display: block; }
+
+    /* ══════════════════════════════════════════
+       CTA BUTTONS
+    ══════════════════════════════════════════ */
+    .btn-primary {
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, #ff6b35 0%, var(--gold) 100%);
+      color: #0a0500;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Orbitron', monospace;
+      font-size: .88rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      padding: 16px 24px;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 6px 28px rgba(255,107,53,.35), inset 0 1px 0 rgba(255,255,255,.25);
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.2) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity .25s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px) scale(1.015);
+      box-shadow: 0 12px 40px rgba(255,107,53,.5), inset 0 1px 0 rgba(255,255,255,.25);
+    }
+
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary:active { transform: scale(.98); }
+
+    /* shimmer sweep */
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
+      animation: sweep 3s ease-in-out 1s infinite;
+    }
+
+    @keyframes sweep {
+      0%   { left: -100%; }
+      40%  { left:  150%; }
+      100% { left:  150%; }
+    }
+
+    .btn-select {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(0,240,255,.12), rgba(185,79,255,.12));
+      border: 1px solid rgba(0,240,255,.3);
+      color: var(--neon);
+      border-radius: 12px;
+      font-family: 'Orbitron', monospace;
+      font-size: .88rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      padding: 16px 24px;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s, background .2s;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 4px 20px rgba(0,240,255,.12);
+    }
+
+    .btn-select:hover {
+      background: linear-gradient(135deg, rgba(0,240,255,.2), rgba(185,79,255,.2));
+      box-shadow: 0 8px 32px rgba(0,240,255,.25);
+      transform: translateY(-2px);
+    }
+
+    .btn-select:active { transform: scale(.98); }
+
+    /* ══════════════════════════════════════════
+       BACK BUTTON
+    ══════════════════════════════════════════ */
+    .btn-back {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-size: .82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 20px;
+      padding: 4px 0;
+      transition: color .2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-back:hover { color: var(--text); }
+
+    .btn-back svg {
+      width: 16px; height: 16px;
+      transition: transform .2s;
+    }
+
+    .btn-back:hover svg { transform: translateX(-3px); }
+
+    /* ══════════════════════════════════════════
+       PAGE TRANSITION
+    ══════════════════════════════════════════ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide-in {
+      animation: fadeUp .55s cubic-bezier(.22,.68,0,1.15) both;
+    }
+
+    /* ══════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════ */
+    footer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 10;
+      text-align: center;
+      padding: 10px 16px 14px;
+      font-size: .65rem;
+      letter-spacing: .1em;
+      color: var(--muted);
+      background: linear-gradient(to top, rgba(7,8,15,.95) 60%, transparent);
+    }
+
+    /* ══════════════════════════════════════════
+       SCROLLBAR
+    ══════════════════════════════════════════ */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,240,255,.2); border-radius: 2px; }
+
+    /* ══════════════════════════════════════════
+       MOBILE TWEAKS
+    ══════════════════════════════════════════ */
+    @media (max-width: 360px) {
+      .card { padding: 20px 16px; }
+      #duration-buttons { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+      .duration-button { font-size: .72rem; padding: 9px 2px; }
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-r from-purple-500 to-indigo-600 min-h-screen flex flex-col items-center justify-center text-white transition-all duration-500">
+<body>
 
-    <div id="subscription-page" class="max-w-3xl p-8 animate-fadeIn">
-        <h1 class="text-4xl font-bold text-center mb-8 animate-pulse">Выберите подписку</h1>
+  <!-- Particles -->
+  <div id="particles"></div>
 
-        <div class="bg-white rounded-3xl shadow-2xl p-8 text-gray-800 transform transition-transform hover:scale-105 duration-300">
-            <h2 class="text-3xl font-bold mb-4 text-center text-purple-700">Fernie+</h2>
-            <p class="mb-4 text-lg text-center font-semibold">Преимущества:</p>
-            <ul class="list-disc ml-6 space-y-2">
-                <li>Обновленный стиль профиля</li>
-                <li>Уменьшенное время ожидания КД</li>
-                <li>Безограниченный доступ к /ai</li>
-                <li>Множество доп. бонусов</li>
-            </ul>
-            <div class="flex justify-center mt-6">
-                <button onclick="goToCheckout()" class="bg-gradient-to-r from-pink-500 to-yellow-500 text-white font-bold px-6 py-3 rounded-lg shadow-lg hover:scale-105 transition-transform duration-300">
-                    Выбрать
-                </button>
-            </div>
-        </div>
+  <!-- ══════ PAGE 1: SUBSCRIPTION ══════ -->
+  <div id="subscription-page" class="page">
+    <div class="brand">
+      <div class="brand-logo">FernieX</div>
+      <div class="brand-sub">Premium Access</div>
     </div>
 
-    <div id="checkout-page" class="hidden max-w-3xl p-8 animate-fadeIn">
-        <h1 class="text-4xl font-bold text-center mb-6">Оформление подписки</h1>
-        <div class="bg-white rounded-3xl shadow-2xl p-8 text-gray-800 transform transition-transform hover:scale-105 duration-300">
-            <p class="mb-4"><strong>Подписка:</strong> Fernie+</p>
-            <p class="mb-4"><strong>Срок:</strong></p>
-            <div class="grid grid-cols-3 gap-3 mb-6" id="duration-buttons"></div>
-            <div id="payment-options" class="hidden transition-all duration-500"></div>
-        </div>
+    <div class="card">
+      <div class="plan-header">
+        <div class="plan-title">Fernie+</div>
+        <div class="plan-badge">Premium</div>
+      </div>
+
+      <ul class="features">
+        <li>
+          <span class="feat-icon">✦</span>
+          Обновлённый стиль профиля
+        </li>
+        <li>
+          <span class="feat-icon">⚡</span>
+          Сниженное время ожидания КД
+        </li>
+        <li>
+          <span class="feat-icon">∞</span>
+          Безлимитный доступ к /ai
+        </li>
+        <li>
+          <span class="feat-icon">★</span>
+          Множество эксклюзивных бонусов
+        </li>
+      </ul>
+
+      <div class="divider"></div>
+
+      <button class="btn-select" onclick="goToCheckout()">
+        Оформить подписку →
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════ PAGE 2: CHECKOUT ══════ -->
+  <div id="checkout-page" class="page hidden">
+    <div class="brand">
+      <div class="brand-logo">FernieX</div>
+      <div class="brand-sub">Оформление</div>
     </div>
 
-    <!-- Футер -->
-    <footer class="w-full text-center mt-auto py-2 text-xs text-white/80">
-        © 2025-2026. Все права защищены сервисом FernieX
-    </footer>
+    <div class="card slide-in">
+      <button class="btn-back" onclick="goBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+        Назад
+      </button>
 
-    <script src="scripts.js"></script>
+      <div class="section-label">Выберите срок</div>
+      <div id="duration-buttons"></div>
+
+      <div id="payment-options" class="hidden">
+        <div class="divider"></div>
+        <div class="section-label">Способ оплаты</div>
+        <div id="payment-buttons"></div>
+        <div id="total-price"></div>
+        <button id="pay-button" class="btn-primary">Оплатить в боте</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>© 2025 – 2026 &nbsp;·&nbsp; FernieX — Все права защищены</footer>
+
+  <script>
+    /* ══════════════════════════════════════════
+       PARTICLES
+    ══════════════════════════════════════════ */
+    (function spawnParticles() {
+      const container = document.getElementById('particles');
+      const colors = ['#00f0ff','#b94fff','#0fffa0','#ffd166'];
+      for (let i = 0; i < 28; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 4 + 1.5;
+        p.style.cssText = `
+          width:${size}px; height:${size}px;
+          left:${Math.random()*100}%;
+          top:${Math.random()*100}%;
+          background:${colors[Math.floor(Math.random()*colors.length)]};
+          animation-duration:${8+Math.random()*14}s;
+          animation-delay:${Math.random()*10}s;
+          filter:blur(${size>.5?0.5:0}px);
+          box-shadow:0 0 ${size*3}px currentColor;
+        `;
+        container.appendChild(p);
+      }
+    })();
+
+    /* ══════════════════════════════════════════
+       DATA
+    ══════════════════════════════════════════ */
+    const DURATIONS = {
+      "12h": ["12 ч.",   12 * 3600,         750,    100],
+      "24h": ["24 ч.",   24 * 3600,         1500,   150],
+      "3d":  ["3 дн.",   3 * 86400,         3000,   300],
+      "7d":  ["7 дн.",   7 * 86400,         7500,   800],
+      "15d": ["15 дн.",  15 * 86400,        20000,  2100],
+      "30d": ["30 дн.",  30 * 86400,        37500,  4000],
+      "6m":  ["6 мес.",  6 * 30 * 86400,   200000, 20500],
+      "1y":  ["1 год",   365 * 86400,      400000, 40500]
+    };
+
+    let selectedDuration = null;
+    let selectedPayment  = null;
+    let paymentButtons   = [];
+
+    /* ══════════════════════════════════════════
+       NAVIGATION
+    ══════════════════════════════════════════ */
+    function goToCheckout() {
+      document.getElementById('subscription-page').classList.add('hidden');
+      const co = document.getElementById('checkout-page');
+      co.classList.remove('hidden');
+
+      const container = document.getElementById('duration-buttons');
+      container.innerHTML = '';
+
+      Object.entries(DURATIONS).forEach(([key, val]) => {
+        const btn = document.createElement('button');
+        btn.textContent = val[0];
+        btn.className = 'duration-button';
+        btn.onclick = () => selectDuration(key, btn);
+        container.appendChild(btn);
+      });
+
+      setupPaymentButtons();
+    }
+
+    function goBack() {
+      document.getElementById('checkout-page').classList.add('hidden');
+      document.getElementById('subscription-page').classList.remove('hidden');
+      selectedDuration = null;
+      selectedPayment  = null;
+    }
+
+    /* ══════════════════════════════════════════
+       DURATION SELECT
+    ══════════════════════════════════════════ */
+    function selectDuration(key, el) {
+      selectedDuration = key;
+      document.querySelectorAll('.duration-button').forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('payment-options').classList.remove('hidden');
+      updatePrice();
+    }
+
+    /* ══════════════════════════════════════════
+       PAYMENT SETUP
+    ══════════════════════════════════════════ */
+    function setupPaymentButtons() {
+      const wrap = document.getElementById('payment-buttons');
+      wrap.innerHTML = '';
+      paymentButtons = [];
+
+      const methods = [
+        { label: 'Семена',       value: 'seeds' },
+        { label: 'DigitalCoins', value: 'digitalcoins' }
+      ];
+
+      methods.forEach(m => {
+        const btn = document.createElement('button');
+        btn.textContent = m.label;
+        btn.dataset.value = m.value;
+        btn.className = 'payment-button';
+        btn.onclick = () => selectPayment(m, btn);
+        paymentButtons.push(btn);
+        wrap.appendChild(btn);
+      });
+
+      document.getElementById('pay-button').onclick = payInBot;
+    }
+
+    function selectPayment(method, el) {
+      selectedPayment = method;
+      paymentButtons.forEach(b => b.classList.remove('selected'));
+      el.classList.add('selected');
+      updatePrice();
+    }
+
+    /* ══════════════════════════════════════════
+       PRICE UPDATE
+    ══════════════════════════════════════════ */
+    function updatePrice() {
+      if (!selectedDuration || !selectedPayment) return;
+      const idx   = selectedPayment.value === 'seeds' ? 2 : 3;
+      const price = DURATIONS[selectedDuration][idx];
+      const el    = document.getElementById('total-price');
+      el.textContent = `К оплате: ${price.toLocaleString('ru')} ${selectedPayment.label}`;
+      el.classList.add('visible');
+    }
+
+    /* ══════════════════════════════════════════
+       PAY
+    ══════════════════════════════════════════ */
+    function payInBot() {
+      if (!selectedDuration || !selectedPayment) {
+        shakeMissing(); return;
+      }
+      const url = `https://t.me/FernieXBot?start=fernieplus_${selectedDuration}_${selectedPayment.value}`;
+      window.open(url, '_blank');
+    }
+
+    function shakeMissing() {
+      const card = document.querySelector('#checkout-page .card');
+      card.style.animation = 'none';
+      card.style.transition = 'none';
+      let shakes = 0;
+      let dir = 1;
+      const interval = setInterval(() => {
+        card.style.transform = `translateX(${dir * 7}px)`;
+        dir *= -1; shakes++;
+        if (shakes >= 8) {
+          clearInterval(interval);
+          card.style.transform = '';
+          card.style.transition = '';
+        }
+      }, 50);
+    }
+  </script>
 </body>
 </html>
