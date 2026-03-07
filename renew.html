@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>Fernie+ — Продление подписки</title>
+  <link href="https://fonts.googleapis.com/css2?family=Geologica:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #09050f;
+      --surface: rgba(255,255,255,0.04);
+      --border:  rgba(255,255,255,0.08);
+      --text:    #f0eaf8;
+      --muted:   #6b5f80;
+      --p1:      #a855f7;
+      --p2:      #7c3aed;
+      --p3:      #c084fc;
+      --gold:    #f59e0b;
+      --green:   #10b981;
+      --red:     #ef4444;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Geologica', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ══ CANVAS BG ══ */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ══ MESH GRADIENT ══ */
+    .mesh {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 55% 45% at 15% 25%,  rgba(168,85,247,.18) 0%, transparent 60%),
+        radial-gradient(ellipse 45% 40% at 85% 15%,  rgba(124,58,237,.14) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 50% at 50% 85%,  rgba(192,132,252,.10) 0%, transparent 60%),
+        radial-gradient(ellipse 35% 30% at 90% 60%,  rgba(245,158,11,.08)  0%, transparent 50%);
+      animation: meshPulse 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes meshPulse {
+      0%   { opacity: .7; }
+      100% { opacity: 1; }
+    }
+
+    /* ══ GRID ══ */
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(168,85,247,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168,85,247,.04) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 80%);
+    }
+
+    /* ══ PAGES ══ */
+    .pg { position: relative; z-index: 2; }
+    .pg.hidden { display: none !important; }
+
+    /* ══════════════════════
+       PAGE 1 — LANDING
+    ══════════════════════ */
+    #pg-land {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px 80px;
+      text-align: center;
+    }
+
+    /* renewal chip */
+    .renewal-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(239,68,68,.12);
+      border: 1px solid rgba(239,68,68,.3);
+      border-radius: 99px;
+      padding: 7px 16px;
+      margin-bottom: 28px;
+      animation: chipIn .7s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .chip-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--red);
+      animation: dotBlink 1.4s ease-in-out infinite;
+    }
+
+    @keyframes dotBlink {
+      0%,100% { opacity:1; box-shadow: 0 0 6px var(--red); }
+      50%      { opacity:.2; box-shadow: none; }
+    }
+
+    .chip-text {
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--red);
+    }
+
+    @keyframes chipIn {
+      from { opacity:0; transform: scale(.8) translateY(-10px); }
+      to   { opacity:1; transform: scale(1) translateY(0); }
+    }
+
+    /* main title */
+    .land-eyebrow {
+      font-size: .68rem;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: 12px;
+      animation: fadeUp .7s ease .1s both;
+    }
+
+    .land-title {
+      font-size: clamp(3.8rem, 16vw, 6.5rem);
+      font-weight: 900;
+      letter-spacing: -.04em;
+      line-height: .85;
+      margin-bottom: 8px;
+      animation: fadeUp .7s ease .18s both;
+    }
+
+    .land-title .t-fernie { color: var(--text); }
+    .land-title .t-plus {
+      background: linear-gradient(135deg, var(--p1), var(--p3), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      background-size: 200% 200%;
+      animation: gradShift 3s ease infinite;
+    }
+
+    @keyframes gradShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .land-renew-label {
+      font-size: clamp(1rem, 4vw, 1.3rem);
+      font-weight: 300;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--p3);
+      opacity: .8;
+      margin-bottom: 16px;
+      animation: fadeUp .7s ease .26s both;
+    }
+
+    .land-sub {
+      font-size: .85rem;
+      font-weight: 300;
+      color: var(--muted);
+      max-width: 300px;
+      line-height: 1.7;
+      animation: fadeUp .7s ease .34s both;
+    }
+
+    /* benefits mini */
+    .land-benefits {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 28px 0 36px;
+      text-align: left;
+      animation: fadeUp .7s ease .4s both;
+    }
+
+    .lb-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: .78rem;
+      color: rgba(240,234,248,.6);
+    }
+
+    .lb-icon {
+      width: 24px; height: 24px;
+      border-radius: 6px;
+      background: rgba(168,85,247,.15);
+      border: 1px solid rgba(168,85,247,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem;
+      flex-shrink: 0;
+    }
+
+    /* CTA */
+    .land-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--p2), var(--p1));
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      font-family: 'Geologica', sans-serif;
+      font-size: .9rem;
+      font-weight: 700;
+      letter-spacing: .03em;
+      padding: 18px 38px;
+      cursor: pointer;
+      box-shadow: 0 12px 40px rgba(168,85,247,.35);
+      transition: transform .2s, box-shadow .2s;
+      animation: fadeUp .7s ease .46s both;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .land-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.18) 0%, transparent 55%);
+    }
+
+    .land-cta::after {
+      content: '';
+      position: absolute;
+      top:0; left:-100%;
+      width:50%; height:100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
+      animation: cta-shine 2.8s ease-in-out 1s infinite;
+    }
+
+    @keyframes cta-shine {
+      0%   { left: -100%; }
+      40%  { left: 150%; }
+      100% { left: 150%; }
+    }
+
+    .land-cta:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 20px 55px rgba(168,85,247,.48);
+    }
+
+    .land-cta svg { transition: transform .2s; }
+    .land-cta:hover svg { transform: translateX(4px); }
+
+    /* ══════════════════════
+       PAGE 2 — CARDS
+    ══════════════════════ */
+    #pg-cards {
+      min-height: 100dvh;
+      padding: 56px 16px 90px;
+    }
+
+    .cards-hdr {
+      text-align: center;
+      margin-bottom: 36px;
+      animation: fadeUp .5s ease both;
+    }
+
+    .cards-hdr h2 {
+      font-size: clamp(1.8rem, 7vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -.03em;
+    }
+
+    .cards-hdr h2 span {
+      background: linear-gradient(135deg, var(--p1), var(--p3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .cards-hdr p {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: 6px;
+      font-weight: 300;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+      gap: 14px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* ── 3D CARD ── */
+    .plan-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px 18px 16px;
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: box-shadow .3s;
+      animation: cardIn .5s cubic-bezier(.16,1,.3,1) both;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    @keyframes cardIn {
+      from { opacity:0; transform: translateY(32px) scale(.92); }
+      to   { opacity:1; transform: translateY(0) scale(1); }
+    }
+
+    /* top glow line */
+    .plan-card::before {
+      content: '';
+      position: absolute;
+      top:0; left:15%; right:15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--p1), transparent);
+      opacity: .5;
+    }
+
+    /* hover shimmer */
+    .plan-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(168,85,247,.15) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity .25s;
+      pointer-events: none;
+      border-radius: 22px;
+    }
+
+    .plan-card:hover::after { opacity: 1; }
+
+    .plan-card.fly-out {
+      animation: flyOut .4s cubic-bezier(.4,0,1,1) forwards !important;
+    }
+
+    @keyframes flyOut {
+      to { opacity:0; transform: translateY(-55px) scale(.88) rotateX(12deg); }
+    }
+
+    .card-pop {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: linear-gradient(135deg, var(--p2), var(--p1));
+      color: #fff;
+      font-size: .45rem;
+      font-weight: 800;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 99px;
+      box-shadow: 0 2px 10px rgba(168,85,247,.4);
+    }
+
+    .card-label {
+      font-size: .58rem;
+      font-weight: 600;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .card-seeds {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .card-seeds-unit {
+      font-size: .58rem;
+      color: var(--muted);
+      margin: 3px 0 5px;
+    }
+
+    .card-dc {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--p3);
+    }
+
+    .card-sep {
+      width: 100%;
+      height: 1px;
+      background: var(--border);
+      margin: 14px 0 12px;
+    }
+
+    .card-pick {
+      width: 100%;
+      background: transparent;
+      border: 1.5px solid rgba(168,85,247,.4);
+      border-radius: 10px;
+      color: var(--p3);
+      font-family: 'Geologica', sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      padding: 10px;
+      cursor: pointer;
+      transition: all .22s;
+      letter-spacing: .04em;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-pick::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--p2), var(--p1));
+      opacity: 0;
+      transition: opacity .22s;
+    }
+
+    .card-pick span { position: relative; z-index: 1; }
+
+    .card-pick:hover {
+      border-color: var(--p1);
+      color: #fff;
+      transform: scale(1.04);
+      box-shadow: 0 6px 22px rgba(168,85,247,.3);
+    }
+
+    .card-pick:hover::before { opacity: 1; }
+
+    /* ══════════════════════
+       PAGE 3 — DETAIL
+    ══════════════════════ */
+    #pg-detail {
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    .detail-box {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 38px 30px 30px;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      animation: detailSlide .55s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    @keyframes detailSlide {
+      from { opacity:0; transform: translateX(80px) scale(.95); }
+      to   { opacity:1; transform: translateX(0) scale(1); }
+    }
+
+    /* top rainbow line */
+    .detail-box::before {
+      content: '';
+      position: absolute;
+      top:0; left:0; right:0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--p2), var(--p1), var(--p3), var(--gold));
+      background-size: 200% 100%;
+      animation: rainbowMove 3s linear infinite;
+    }
+
+    @keyframes rainbowMove {
+      from { background-position: 0% 0%; }
+      to   { background-position: 200% 0%; }
+    }
+
+    .detail-box.out {
+      animation: detailOut .32s cubic-bezier(.4,0,1,1) forwards;
+    }
+
+    @keyframes detailOut {
+      to { opacity:0; transform: translateX(80px) scale(.95); }
+    }
+
+    /* renewal label inside detail */
+    .detail-renewal-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(239,68,68,.1);
+      border: 1px solid rgba(239,68,68,.25);
+      border-radius: 8px;
+      padding: 4px 10px;
+      margin-bottom: 16px;
+      font-size: .55rem;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--red);
+    }
+
+    .detail-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 26px;
+    }
+
+    .detail-sublbl {
+      font-size: .55rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .detail-name {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--text) 40%, var(--p3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .detail-badge {
+      background: rgba(168,85,247,.1);
+      border: 1px solid rgba(168,85,247,.2);
+      color: var(--p3);
+      font-size: .55rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 5px 11px;
+      border-radius: 8px;
+    }
+
+    .d-divider {
+      width:100%; height:1px;
+      background: var(--border);
+      margin: 18px 0;
+    }
+
+    .d-lbl {
+      font-size: .58rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .pay-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .popt {
+      flex: 1;
+      background: rgba(255,255,255,.03);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 10px;
+      cursor: pointer;
+      transition: all .2s;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .popt:hover {
+      border-color: rgba(168,85,247,.35);
+      background: rgba(168,85,247,.06);
+    }
+
+    .popt.sel {
+      border-color: var(--p1);
+      background: rgba(168,85,247,.1);
+      box-shadow: 0 0 0 3px rgba(168,85,247,.15);
+    }
+
+    .popt-name {
+      font-size: .68rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .popt-price {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--p3);
+    }
+
+    .total-block {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(168,85,247,.07);
+      border: 1px solid rgba(168,85,247,.15);
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+    }
+
+    .total-lbl {
+      font-size: .6rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    #d-total {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--p3);
+    }
+
+    .act-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-back {
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--muted);
+      font-family: 'Geologica', sans-serif;
+      font-size: .78rem;
+      font-weight: 600;
+      padding: 15px 18px;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-back:hover { color: var(--text); background: rgba(255,255,255,.09); }
+
+    .btn-pay {
+      flex: 1;
+      background: linear-gradient(135deg, var(--p2), var(--p1));
+      border: none;
+      border-radius: 14px;
+      color: #fff;
+      font-family: 'Geologica', sans-serif;
+      font-size: .88rem;
+      font-weight: 700;
+      padding: 15px 20px;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 8px 28px rgba(168,85,247,.35);
+      letter-spacing: .02em;
+      position: relative;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-pay::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,.18) 0%, transparent 55%);
+    }
+
+    .btn-pay:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 44px rgba(168,85,247,.48);
+    }
+
+    .btn-pay:active { transform: scale(.98); }
+
+    /* ══ FIXED BACK ══ */
+    .nav-back {
+      position: fixed;
+      top: 16px; left: 16px;
+      z-index: 20;
+      background: rgba(9,5,15,.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--muted);
+      font-family: 'Geologica', sans-serif;
+      font-size: .7rem;
+      font-weight: 600;
+      padding: 9px 16px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s, border-color .2s;
+      letter-spacing: .04em;
+    }
+
+    .nav-back.show { display: flex; }
+    .nav-back:hover { color: var(--text); border-color: rgba(168,85,247,.3); }
+
+    /* ══ ANIMATIONS ══ */
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(20px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BG LAYERS -->
+  <canvas id="bg-canvas"></canvas>
+  <div class="mesh"></div>
+  <div class="grid-bg"></div>
+
+  <button class="nav-back" id="nav-back" onclick="backToLand()">← Назад</button>
+
+  <!-- ════ PAGE 1: LANDING ════ -->
+  <div id="pg-land" class="pg">
+    <div class="renewal-chip">
+      <div class="chip-dot"></div>
+      <span class="chip-text">Требуется продление</span>
+    </div>
+
+    <div class="land-eyebrow">Fernie+ Premium</div>
+    <div class="land-title">
+      <span class="t-fernie">Fernie</span><span class="t-plus">+</span>
+    </div>
+    <div class="land-renew-label">Продление подписки</div>
+    <div class="land-sub">Не теряй свои привилегии — продли подписку и сохрани доступ ко всем возможностям</div>
+
+    <div class="land-benefits">
+      <div class="lb-row"><div class="lb-icon">✦</div>Обновлённый стиль профиля</div>
+      <div class="lb-row"><div class="lb-icon">⚡</div>Сниженное время ожидания КД</div>
+      <div class="lb-row"><div class="lb-icon">∞</div>Безлимитный доступ к нейросети (/ai)</div>
+      <div class="lb-row"><div class="lb-icon">&lt;/&gt;</div>Личные M-RP команды (мрп+)</div>
+      <div class="lb-row"><div class="lb-icon">★</div>Эксклюзивные бонусы</div>
+    </div>
+
+    <button class="land-cta" onclick="goCards()">
+      Продлить подписку
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+
+  <!-- ════ PAGE 2: CARDS ════ -->
+  <div id="pg-cards" class="pg hidden">
+    <div class="cards-hdr">
+      <h2>Выберите <span>срок</span> продления</h2>
+      <p>Наведите на карточку — выберите тариф и нажмите «Выбрать»</p>
+    </div>
+    <div class="cards-grid" id="cards-grid"></div>
+  </div>
+
+  <!-- ════ PAGE 3: DETAIL ════ -->
+  <div id="pg-detail" class="pg hidden">
+    <div class="detail-box" id="detail-box">
+      <div class="detail-renewal-tag">🔄 Продление</div>
+
+      <div class="detail-top">
+        <div>
+          <div class="detail-sublbl">Тариф Fernie+</div>
+          <div class="detail-name" id="d-name">—</div>
+        </div>
+        <div class="detail-badge">Premium</div>
+      </div>
+
+      <div class="d-divider"></div>
+      <div class="d-lbl">Способ оплаты</div>
+      <div class="pay-row" id="pay-row"></div>
+
+      <div class="total-block">
+        <span class="total-lbl">Итого</span>
+        <span id="d-total">— выберите способ</span>
+      </div>
+
+      <div class="act-row">
+        <button class="btn-back" onclick="backToCards()">← Назад</button>
+        <button class="btn-pay" onclick="doPay()">Оплатить в боте</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ══ PARTICLES CANVAS ══ */
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, particles = [];
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    resize();
+    window.addEventListener('resize', resize);
+
+    const COLORS = ['168,85,247','124,58,237','192,132,252','245,158,11','240,171,252'];
+
+    class Particle {
+      constructor() { this.reset(true); }
+      reset(init) {
+        this.x  = Math.random() * W;
+        this.y  = init ? Math.random() * H : H + 10;
+        this.r  = Math.random() * 2.5 + .5;
+        this.c  = COLORS[Math.floor(Math.random() * COLORS.length)];
+        this.a  = 0;
+        this.ta = Math.random() * .55 + .15;
+        this.vx = (Math.random() - .5) * .4;
+        this.vy = -(Math.random() * .7 + .2);
+        this.life = 0;
+        this.maxLife = Math.random() * 300 + 200;
+      }
+      update() {
+        this.life++;
+        this.x += this.vx;
+        this.y += this.vy;
+        const t = this.life / this.maxLife;
+        this.a = t < .15 ? (t / .15) * this.ta : t > .75 ? ((1 - t) / .25) * this.ta : this.ta;
+        if (this.life >= this.maxLife || this.y < -10) this.reset(false);
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${this.c},${this.a})`;
+        ctx.fill();
+        // glow
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r * 2.5, 0, Math.PI * 2);
+        const g = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.r * 2.5);
+        g.addColorStop(0, `rgba(${this.c},${this.a * .4})`);
+        g.addColorStop(1, `rgba(${this.c},0)`);
+        ctx.fillStyle = g;
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 70; i++) particles.push(new Particle());
+
+    function animLoop() {
+      ctx.clearRect(0, 0, W, H);
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animLoop);
+    }
+    animLoop();
+
+    /* ══ DATA ══ */
+    const PLANS = [
+      { key:'12h', label:'12 часов',  seeds:750,    dc:100  },
+      { key:'24h', label:'24 часа',   seeds:1500,   dc:150  },
+      { key:'3d',  label:'3 дня',     seeds:3000,   dc:300,  pop:true },
+      { key:'7d',  label:'7 дней',    seeds:7500,   dc:800,  pop:true },
+      { key:'15d', label:'15 дней',   seeds:20000,  dc:2100 },
+      { key:'30d', label:'30 дней',   seeds:37500,  dc:4000, pop:true },
+      { key:'6m',  label:'6 месяцев', seeds:200000, dc:20500 },
+      { key:'1y',  label:'1 год',     seeds:400000, dc:40500 },
+    ];
+
+    let selPlan = null, selMethod = null;
+
+    /* ══ BUILD CARDS ══ */
+    function buildCards() {
+      const grid = document.getElementById('cards-grid');
+      grid.innerHTML = '';
+      PLANS.forEach((p, i) => {
+        const c = document.createElement('div');
+        c.className = 'plan-card';
+        c.style.animationDelay = `${i * .06}s`;
+        c.innerHTML = `
+          ${p.pop ? '<div class="card-pop">хит</div>' : ''}
+          <div class="card-label">${p.label}</div>
+          <div class="card-seeds">${p.seeds.toLocaleString('ru')}</div>
+          <div class="card-seeds-unit">🌱 семян</div>
+          <div class="card-dc">${p.dc.toLocaleString('ru')} DC</div>
+          <div class="card-sep"></div>
+          <button class="card-pick" onclick="pickPlan('${p.key}',event)"><span>Выбрать</span></button>
+        `;
+        c.addEventListener('mousemove', tilt3d);
+        c.addEventListener('mouseleave', untilt3d);
+        grid.appendChild(c);
+      });
+    }
+
+    /* ══ 3D TILT ══ */
+    function tilt3d(e) {
+      const c = e.currentTarget;
+      const r = c.getBoundingClientRect();
+      const dx = (e.clientX - r.left  - r.width  / 2) / (r.width  / 2);
+      const dy = (e.clientY - r.top   - r.height / 2) / (r.height / 2);
+      c.style.transition = 'box-shadow .1s';
+      c.style.transform  = `perspective(650px) rotateX(${-dy*20}deg) rotateY(${dx*20}deg) scale(1.05)`;
+      c.style.boxShadow  = `${-dx*18}px ${-dy*18}px 45px rgba(0,0,0,.35), 0 4px 20px rgba(0,0,0,.2)`;
+      c.style.setProperty('--mx', `${(dx+1)/2*100}%`);
+      c.style.setProperty('--my', `${(dy+1)/2*100}%`);
+    }
+
+    function untilt3d(e) {
+      const c = e.currentTarget;
+      c.style.transition = 'transform .55s cubic-bezier(.16,1,.3,1), box-shadow .55s';
+      c.style.transform  = 'perspective(650px) rotateX(0) rotateY(0) scale(1)';
+      c.style.boxShadow  = '';
+    }
+
+    /* ══ PICK PLAN ══ */
+    function pickPlan(key, e) {
+      e.stopPropagation();
+      selPlan = PLANS.find(p => p.key === key);
+      selMethod = null;
+      const cards = [...document.querySelectorAll('.plan-card')];
+      cards.forEach((c, i) => setTimeout(() => c.classList.add('fly-out'), i * 50));
+      setTimeout(() => {
+        document.getElementById('pg-cards').classList.add('hidden');
+        showDetail();
+      }, cards.length * 50 + 330);
+    }
+
+    /* ══ DETAIL ══ */
+    function showDetail() {
+      document.getElementById('d-name').textContent = selPlan.label;
+      document.getElementById('d-total').textContent = '— выберите способ';
+
+      const row = document.getElementById('pay-row');
+      row.innerHTML = '';
+      [
+        { label:'Семена 🌱', val:'seeds',       price:selPlan.seeds, unit:'сем.' },
+        { label:'DigitalCoins', val:'digitalcoins', price:selPlan.dc,    unit:'DC'  },
+      ].forEach(m => {
+        const el = document.createElement('div');
+        el.className = 'popt';
+        el.innerHTML = `<div class="popt-name">${m.label}</div><div class="popt-price">${m.price.toLocaleString('ru')} ${m.unit}</div>`;
+        el.onclick = () => {
+          document.querySelectorAll('.popt').forEach(x => x.classList.remove('sel'));
+          el.classList.add('sel');
+          selMethod = m;
+          document.getElementById('d-total').textContent = `${m.price.toLocaleString('ru')} ${m.unit}`;
+        };
+        row.appendChild(el);
+      });
+
+      const box = document.getElementById('detail-box');
+      box.classList.remove('out');
+      box.style.animation = 'none';
+      box.offsetHeight;
+      box.style.animation = '';
+      document.getElementById('pg-detail').classList.remove('hidden');
+      document.getElementById('nav-back').classList.add('show');
+    }
+
+    /* ══ BACK TO CARDS ══ */
+    function backToCards() {
+      const box = document.getElementById('detail-box');
+      box.classList.add('out');
+      setTimeout(() => {
+        box.classList.remove('out');
+        document.getElementById('pg-detail').classList.add('hidden');
+        document.getElementById('pg-cards').classList.remove('hidden');
+        buildCards();
+      }, 280);
+    }
+
+    /* ══ PAY ══ */
+    function doPay() {
+      if (!selMethod) {
+        const box = document.getElementById('detail-box');
+        let s=0, d=1;
+        const iv = setInterval(() => {
+          box.style.transform = `translateX(${d*8}px)`;
+          d*=-1; s++;
+          if (s>=8) { clearInterval(iv); box.style.transform=''; }
+        }, 50);
+        return;
+      }
+      window.open(`https://t.me/FernieXBot?start=fernieplusrenew_${selPlan.key}_${selMethod.val}`, '_blank');
+    }
+
+    /* ══ NAV ══ */
+    function goCards() {
+      document.getElementById('pg-land').classList.add('hidden');
+      document.getElementById('pg-cards').classList.remove('hidden');
+      document.getElementById('nav-back').classList.add('show');
+      buildCards();
+    }
+
+    function backToLand() {
+      document.getElementById('pg-cards').classList.add('hidden');
+      document.getElementById('pg-detail').classList.add('hidden');
+      document.getElementById('pg-land').classList.remove('hidden');
+      document.getElementById('nav-back').classList.remove('show');
+      selPlan = null; selMethod = null;
+    }
+  </script>
+</body>
+</html>
